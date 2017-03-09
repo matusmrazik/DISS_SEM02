@@ -10,6 +10,7 @@
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
@@ -27,3 +28,12 @@
 *.exe
 *.out
 *.app
+
+# Qt Creator files
+*.pro.user
+
+# Build files
+Makefile
+moc_*
+ui_*
+bin/
