@@ -37,11 +37,30 @@ else:unix: LIBS += -lqcustomplot
 SOURCES += \
 	main.cpp \
 	MainWindow.cpp \
-	log/log.cpp
+	log/log.cpp \
+	pool/object_pool.cpp \
+	stat/statistic_discrete.cpp \
+	gen/empirical_int_distribution_generator.cpp \
+	gen/triangular_distribution_generator.cpp \
+	sim/customer.cpp \
+	sim/sim_core_base.cpp \
+	sim/sim_event_base.cpp \
+	sim/sim_core_car_service.cpp \
+	sim/sim_events_car_service.cpp
 
 HEADERS += \
 	MainWindow.hpp \
-	log/log.hpp
+	log/log.hpp \
+	pool/object_pool.hpp \
+	stat/statistic_discrete.hpp \
+	gen/empirical_int_distribution_generator.hpp \
+	gen/triangular_distribution_generator.hpp \
+	sim/customer.hpp \
+	sim/sim_settings.hpp \
+	sim/sim_core_base.hpp \
+	sim/sim_event_base.hpp \
+	sim/sim_core_car_service.hpp \
+	sim/sim_events_car_service.hpp
 
 FORMS += \
 	MainWindow.ui
