@@ -31,7 +31,7 @@ void Log::log(const char *format, int line, Args&&... args)
 	char time_str[20];
 	snprintf(time_str, 20, "%02d.%02d.%04d %02d:%02d:%02d", tm->tm_mday, tm->tm_mon, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
 
-	fprintf(_stream, format, time_str, line, std::forward<Args...>(args)...);
+	fprintf(_stream, format, time_str, line, std::forward<Args>(args)...);
 }
 
 #define __LOG_FORMAT_HELPER(fmt, log_type)  log_type " [%s] [" __FILE__ ":line %d] " fmt "\n"
