@@ -6,10 +6,15 @@
 #include "customer.hpp"
 #include "gen/empirical_int_distribution_generator.hpp"
 #include "gen/triangular_distribution_generator.hpp"
-#include "stat/statistic_discrete.hpp"
+#include "stat/statistic.hpp"
 
-class sim_core_car_service : public sim_core_base
+#include <atomic>
+#include <QObject>
+
+class sim_core_car_service : public QObject, public sim_core_base
 {
+	Q_OBJECT
+
 public:
 	sim_core_car_service();
 	virtual ~sim_core_car_service();
@@ -22,6 +27,8 @@ public:
 	void after_simulation() override;
 
 	void on_replication_start();
+	void on_refresh();
+	void on_workday_end();
 	void on_customer_arrive(customer *c);
 	void on_order_entry(customer *c, size_t worker_index);
 	void on_car_takeover(customer *c, size_t worker_index);
@@ -30,7 +37,15 @@ public:
 	void on_repair_finish(customer *c, size_t worker_index);
 	void on_car_return_start(customer *c, size_t worker_index);
 	void on_car_return_finish(customer *c, size_t worker_index);
-	void on_workday_end();
+
+	void set_watch_mode_active(bool active);
+	void set_sim_speed(double sim_speed);
+	void set_refresh_rate(double refresh_rate);
+
+signals:
+	void replication_finished(double wait_for_repair_time, double wait_in_queue_time);
+	void simulation_finished(double wait_for_repair_time, double wait_in_queue_time);
+	void refresh_triggered();
 
 private:
 	void _init_time() override;
@@ -63,14 +78,15 @@ private:
 	Generator _gen_car_takeover_dur;
 
 	triangular_distribution_generator<> _gen_park_to_workshop_dur;
+	triangular_distribution_generator<> _gen_park_from_workshop_dur;
 
 	std::uniform_real_distribution<> _dist_car_return_dur;
 	Generator _gen_car_return_dur;
 
-	statistic_discrete _stat_wait_for_repair;
-	statistic_discrete _stat_wait_in_queue;
-	statistic_discrete _stat_wait_for_repair_total;
-	statistic_discrete _stat_wait_in_queue_total;
+	statistic _stat_wait_for_repair;
+	statistic _stat_wait_in_queue;
+	statistic _stat_wait_for_repair_total;
+	statistic _stat_wait_in_queue_total;
 
 	std::vector<bool> _workers_group1;
 	std::vector<bool> _workers_group2;
@@ -78,6 +94,11 @@ private:
 	std::queue<customer*> _customer_queue;
 	std::queue<customer*> _cars_for_repair_queue;
 	std::queue<customer*> _repaired_cars_queue;
+
+	std::atomic<bool> _watch_mode_enabled;
+	std::atomic<bool> _refresh_planned;
+	std::atomic<double> _refresh_rate;
+	std::atomic<double> _sim_speed;
 };
 
 #endif // SIM_CORE_CAR_SERVICE_HPP

@@ -24,6 +24,34 @@ void sim_event_replication_start::execute()
 	_sim->on_replication_start();
 }
 
+sim_event_refresh::sim_event_refresh(double time, sim_core_car_service *sim)
+	: sim_event_base(time), _sim(sim)
+{
+}
+
+sim_event_refresh::~sim_event_refresh()
+{
+}
+
+void sim_event_refresh::execute()
+{
+	_sim->on_refresh();
+}
+
+sim_event_workday_end::sim_event_workday_end(double time, sim_core_car_service *sim)
+	: sim_event_base(time), _sim(sim)
+{
+}
+
+sim_event_workday_end::~sim_event_workday_end()
+{
+}
+
+void sim_event_workday_end::execute()
+{
+	_sim->on_workday_end();
+}
+
 sim_event_customer_arrive::sim_event_customer_arrive(double time, sim_core_car_service *sim, customer *c)
 	: sim_event_car_service(time, sim, c)
 {
@@ -134,18 +162,4 @@ sim_event_car_return_finish::~sim_event_car_return_finish()
 void sim_event_car_return_finish::execute()
 {
 	_sim->on_car_return_finish(_customer, _worker);
-}
-
-sim_event_workday_end::sim_event_workday_end(double time, sim_core_car_service *sim)
-	: sim_event_car_service(time, sim, nullptr)
-{
-}
-
-sim_event_workday_end::~sim_event_workday_end()
-{
-}
-
-void sim_event_workday_end::execute()
-{
-	_sim->on_workday_end();
 }

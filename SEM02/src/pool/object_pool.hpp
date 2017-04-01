@@ -166,6 +166,8 @@ public:
 	template <size_t N>
 	using type = typename std::tuple_element<N, std::tuple<Types...>>::type;
 
+	static constexpr size_t NTypes = sizeof...(Types);
+
 public:
 	explicit inline multi_object_pool(const size_t chunks_in_block = 32)
 		: base_type(chunks_in_block)

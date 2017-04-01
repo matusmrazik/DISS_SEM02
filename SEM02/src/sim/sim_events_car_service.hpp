@@ -29,6 +29,30 @@ protected:
 	sim_core_car_service *_sim;
 };
 
+class sim_event_refresh : public sim_event_base
+{
+public:
+	sim_event_refresh(double time, sim_core_car_service *sim);
+	~sim_event_refresh();
+
+	void execute() override;
+
+protected:
+	sim_core_car_service *_sim;
+};
+
+class sim_event_workday_end : public sim_event_base
+{
+public:
+	sim_event_workday_end(double time, sim_core_car_service *sim);
+	~sim_event_workday_end();
+
+	void execute() override;
+
+protected:
+	sim_core_car_service *_sim;
+};
+
 class sim_event_customer_arrive : public sim_event_car_service
 {
 public:
@@ -100,15 +124,5 @@ public:
 
 	void execute() override;
 };
-
-class sim_event_workday_end : public sim_event_car_service
-{
-public:
-	sim_event_workday_end(double time, sim_core_car_service *sim);
-	~sim_event_workday_end();
-
-	void execute() override;
-};
-
 
 #endif // SIM_EVENTS_CAR_SERVICE_HPP
