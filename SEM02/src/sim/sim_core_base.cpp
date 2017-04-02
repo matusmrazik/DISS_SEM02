@@ -78,6 +78,11 @@ sim_core_base::state sim_core_base::get_state() const
 	return _state;
 }
 
+bool sim_core_base::is_event_queue_empty() const
+{
+	return _event_queue.empty();
+}
+
 bool sim_core_base::_process_next_event()
 {
 	auto event = _event_queue.top();

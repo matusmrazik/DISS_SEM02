@@ -31,16 +31,16 @@ void sim_wrapper::find_best_solution(uint32_t w1_min, uint32_t w1_max, uint32_t 
 		}
 	}
 	printf("Najlepsi pocet pracovnikov: %u v 1. skupine, %u v 2. skupine\n", _best_setting.first, _best_setting.second);
-	printf("Priemerny cas cakania na opravu: %s\n", to_pretty_str(_best_result.first).c_str());
-	printf("Priemerny cas cakania v rade: %s\n", to_pretty_str(_best_result.second).c_str());
+	printf("Priemerny cas cakania na opravu: %s\n", duration_as_string(_best_result.first).toUtf8().data());
+	printf("Priemerny cas cakania v rade: %s\n", duration_as_string(_best_result.second).toUtf8().data());
 }
 
 void sim_wrapper::run()
 {
 	_sim.init(_workers1, _workers2);
 	_sim.simulate(_replications, _max_time);
-	printf("Priemerny cas cakania na opravu: %s\n", to_pretty_str(_cur_result.first).c_str());
-	printf("Priemerny cas cakania v rade: %s\n", to_pretty_str(_cur_result.second).c_str());
+	printf("Priemerny cas cakania na opravu: %s\n", duration_as_string(_cur_result.first).toUtf8().data());
+	printf("Priemerny cas cakania v rade: %s\n", duration_as_string(_cur_result.second).toUtf8().data());
 }
 
 void sim_wrapper::simulation_finished(double wait_for_repair_time, double wait_in_queue_time)

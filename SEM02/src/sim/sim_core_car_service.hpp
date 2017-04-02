@@ -43,8 +43,8 @@ public:
 	void set_refresh_rate(double refresh_rate);
 
 signals:
-	void replication_finished(double wait_for_repair_time, double wait_in_queue_time);
-	void simulation_finished(double wait_for_repair_time, double wait_in_queue_time);
+	void replication_finished(int replication, double wait_for_repair_time, double wait_in_queue_time);
+	void simulation_finished(double wait_for_repair_total_time, double wait_in_queue_total_time);
 	void refresh_triggered();
 
 private:

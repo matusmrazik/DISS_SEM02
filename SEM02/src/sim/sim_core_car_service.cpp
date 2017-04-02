@@ -101,12 +101,19 @@ void sim_core_car_service::before_replication(uint32_t)
 	plan_event(EVENTS_POOL.construct<sim_event_customer_arrive>(cust->arrive_time, this, cust));
 	plan_event(EVENTS_POOL.construct<sim_event_replication_start>(0.0, this));
 	plan_event(EVENTS_POOL.construct<sim_event_workday_end>(days(1.0), this));
+
+	if (_watch_mode_enabled && !_refresh_planned)
+	{
+		plan_event(EVENTS_POOL.construct<sim_event_refresh>(_cur_time, this));
+		_refresh_planned = true;
+	}
 }
 
-void sim_core_car_service::after_replication(uint32_t)
+void sim_core_car_service::after_replication(uint32_t replication)
 {
-	emit replication_finished(_stat_wait_for_repair.mean(), _stat_wait_in_queue.mean());
+	emit replication_finished(replication, _stat_wait_for_repair.mean(), _stat_wait_in_queue.mean());
 	_clear_all_queues();
+	_refresh_planned = false;
 //	printf("replication %u: finish time: %s\n", replication, to_pretty_str(_cur_time).c_str());
 	_stat_wait_for_repair_total.add(_stat_wait_for_repair.mean());
 	_stat_wait_in_queue_total.add(_stat_wait_in_queue.mean());
@@ -124,8 +131,10 @@ void sim_core_car_service::after_simulation()
 	emit simulation_finished(_stat_wait_for_repair_total.mean(), _stat_wait_in_queue_total.mean());
 //	printf("Priemerny cas cakania na opravu: %f h\n", to_hours(_stat_wait_for_repair_total.mean()));
 //	printf("Priemerny cas cakania v rade: %f min\n", to_minutes(_stat_wait_in_queue_total.mean()));
-	printf("Priemerny cas cakania na opravu: %s\n", to_pretty_str(_stat_wait_for_repair_total.mean()).c_str());
-	printf("Priemerny cas cakania v rade: %s\n", to_pretty_str(_stat_wait_in_queue_total.mean()).c_str());
+//	printf("Priemerny cas cakania na opravu: %s\n", to_pretty_str(_stat_wait_for_repair_total.mean()).c_str());
+//	printf("Priemerny cas cakania v rade: %s\n", to_pretty_str(_stat_wait_in_queue_total.mean()).c_str());
+	printf("Priemerny cas cakania na opravu: %s\n", duration_as_string(_stat_wait_for_repair_total.mean()).toUtf8().data());
+	printf("Priemerny cas cakania v rade: %s\n", duration_as_string(_stat_wait_in_queue_total.mean()).toUtf8().data());
 	_stat_wait_for_repair_total.clear();
 	_stat_wait_in_queue_total.clear();
 }
@@ -157,6 +166,9 @@ void sim_core_car_service::on_refresh()
 		_refresh_planned = false;
 		return;
 	}
+
+	if (is_event_queue_empty())
+		return;
 
 	plan_event(EVENTS_POOL.construct<sim_event_refresh>(_cur_time + _refresh_rate, this));
 }
@@ -318,16 +330,17 @@ void sim_core_car_service::on_car_return_finish(customer *c, size_t worker_index
 void sim_core_car_service::set_watch_mode_active(bool active)
 {
 	_watch_mode_enabled = active;
-	if (!active)
-		return;
 
-	if (_state == state::RUNNING || _state == state::PAUSED)
+	if (_state != state::RUNNING && _state != state::PAUSED)
 	{
-		if (!_refresh_planned)
-		{
-			plan_event(EVENTS_POOL.construct<sim_event_refresh>(_cur_time + _refresh_rate, this));
-			_refresh_planned = true;
-		}
+		_refresh_planned = false;
+		return;
+	}
+
+	if (active && !_refresh_planned)
+	{
+		plan_event(EVENTS_POOL.construct<sim_event_refresh>(_cur_time + _refresh_rate, this));
+		_refresh_planned = true;
 	}
 }
 

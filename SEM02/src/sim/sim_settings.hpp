@@ -2,13 +2,13 @@
 #define SIM_SETTINGS_HPP
 
 #include <random>
-#include <cstdio>
-#include <cstring>
+#include <QString>
 
 using Generator = std::default_random_engine;
 using Seed = Generator::result_type;
 
-constexpr double WORKDAY_HOURS          = 8.0;
+constexpr uint32_t WORKDAY_HOURS        = 8;
+constexpr uint32_t WORKDAY_START_HOUR   = 7;
 constexpr double HEAT_UP_HOURS          = 0.5;
 
 template <typename T>
@@ -44,20 +44,29 @@ constexpr inline double to_hours(const T &time)
 template <typename T>
 constexpr inline double to_days(const T &time)
 {
-	return to_hours(time) / WORKDAY_HOURS;
+	return to_hours(time) / static_cast<double>(WORKDAY_HOURS);
 }
 
-inline std::string to_pretty_str(const double time)
+inline QString duration_as_string(const double time)
 {
 	auto s = static_cast<int>(time);
 	double seconds = time - s + (s % 60);
 	int minutes = (s / 60) % 60;
-	int hours = (s / 3600) % 24;
-	int days = static_cast<int>(to_days(s));
-	char str[30];
-	std::memset(str, 0, 30);
-	sprintf(str, "%d:%02d:%02d:%09.06f", days, hours, minutes, seconds);
-	return std::string(str);
+	int hours = s / 3600;
+	return QString::asprintf("%02d h, %02d min, %05.02f s", hours, minutes, seconds);
+}
+
+inline QString sim_time_as_string(const double time)
+{
+	if (time < 0.0)
+		return "Zahrievanie...";
+
+	auto s = static_cast<int>(time);
+	double seconds = time - s + (s % 60);
+	int minutes = (s / 60) % 60;
+	int hours = WORKDAY_START_HOUR + ((s / 3600) % WORKDAY_HOURS);
+	int days = static_cast<int>(to_days(time)) + 1;
+	return QString::asprintf("deň %d, %02d:%02d:%05.02f", days, hours, minutes, seconds);
 }
 
 constexpr double TIME_BETWEEN_CUSTOMERS = minutes(5.0);

@@ -34,6 +34,7 @@ public:
 
 	double get_cur_time() const;
 	state get_state() const;
+	bool is_event_queue_empty() const;
 
 protected:
 	bool _process_next_event();
