@@ -12,6 +12,12 @@ constexpr uint32_t WORKDAY_START_HOUR   = 7;
 constexpr double HEAT_UP_HOURS          = 0.5;
 
 template <typename T>
+constexpr inline T seconds(const T &secs)
+{
+	return secs;
+}
+
+template <typename T>
 constexpr inline T minutes(const T &mins)
 {
 	return mins * static_cast<T>(60);
@@ -27,6 +33,12 @@ template <typename T>
 constexpr inline T days(const T &d)
 {
 	return hours(d * static_cast<T>(WORKDAY_HOURS));
+}
+
+template <typename T>
+constexpr inline double to_seconds(const T &time)
+{
+	return static_cast<double>(time);
 }
 
 template <typename T>
@@ -53,13 +65,13 @@ inline QString duration_as_string(const double time)
 	double seconds = time - s + (s % 60);
 	int minutes = (s / 60) % 60;
 	int hours = s / 3600;
-	return QString::asprintf("%02d h, %02d min, %05.02f s", hours, minutes, seconds);
+	return QString::asprintf("%02d:%02d:%05.02f", hours, minutes, seconds);
 }
 
 inline QString sim_time_as_string(const double time)
 {
 	if (time < 0.0)
-		return "Zahrievanie...";
+		return "-" + duration_as_string(-time);
 
 	auto s = static_cast<int>(time);
 	double seconds = time - s + (s % 60);

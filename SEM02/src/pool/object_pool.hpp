@@ -6,6 +6,7 @@
 #include <utility>
 #include <forward_list>
 #include <type_traits>
+#include <mutex>
 
 template <typename T, typename... List>
 struct is_from : std::true_type {};
@@ -60,6 +61,7 @@ public:
 
 	void *alloc()
 	{
+		std::lock_guard<std::mutex> lk(_mutex);
 		if (!_first) _add_block(); // no more free chunks, allocate new block
 		if (_next(_first) == 0) // one chunk left
 		{
@@ -74,6 +76,7 @@ public:
 
 	void free(void * const chunk)
 	{
+		std::lock_guard<std::mutex> lk(_mutex);
 		// TODO check if chunk was allocated by this pool
 		void * const chunk_ptr = static_cast<char*>(chunk) - ElementOffset;
 		if (!_first) // no free chunks, this chunk becomes new first
@@ -115,6 +118,7 @@ private:
 private:
 	void *_first;
 	std::forward_list<void*> _blocks;
+	mutable std::mutex _mutex;
 };
 
 template <typename T>

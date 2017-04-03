@@ -85,8 +85,7 @@ bool sim_core_base::is_event_queue_empty() const
 
 bool sim_core_base::_process_next_event()
 {
-	auto event = _event_queue.top();
-	_event_queue.pop();
+	auto event = _event_queue.top_pop();
 	_cur_time = event->time;
 	if (_watch_max_time && (_cur_time > _max_time))
 	{
@@ -102,8 +101,7 @@ void sim_core_base::_clear_event_queue()
 {
 	while (!_event_queue.empty())
 	{
-		auto event = _event_queue.top();
-		_event_queue.pop();
+		auto event = _event_queue.top_pop();
 		_delete_event(event);
 	}
 }

@@ -7,9 +7,39 @@
 #include "gen/empirical_int_distribution_generator.hpp"
 #include "gen/triangular_distribution_generator.hpp"
 #include "stat/statistic.hpp"
+#include "stat/weighted_statistic.hpp"
+#include "stat/confidence_interval.hpp"
 
 #include <atomic>
 #include <QObject>
+
+struct refresh_info
+{
+	size_t workers_1_working;
+	size_t workers_2_working;
+	size_t customer_queue_length;
+	size_t cars_waiting_for_repair_queue_length;
+	size_t repaired_cars_queue_length;
+	double average_customer_queue_length;
+	double average_cars_waiting_for_repair_queue_length;
+	double average_repaired_cars_queue_length;
+	double average_wait_in_queue_duration;
+	double average_wait_for_repair_duration;
+	double average_time_in_service_duration;
+};
+
+struct replication_info
+{
+	double average_customer_queue_length;
+	double average_cars_waiting_for_repair_queue_length;
+	double average_repaired_cars_queue_length;
+	double average_wait_in_queue_duration;
+	double average_wait_for_repair_duration;
+	double average_time_in_service_duration;
+	Interval wait_for_repair_90_CI;
+	Interval time_in_service_90_CI;
+	Interval wait_in_queue_90_CI;
+};
 
 class sim_core_car_service : public QObject, public sim_core_base
 {
@@ -21,10 +51,17 @@ public:
 
 	void init(uint32_t group1_workers, uint32_t group2_workers, Seed seed = std::random_device{}());
 
+	void single_run(uint32_t replications, double max_time, uint32_t w1, uint32_t w2);
+	void single_run_seed(uint32_t replications, double max_time, uint32_t w1, uint32_t w2, Seed seed);
+	void multi_run(uint32_t replications, double max_time, uint32_t w1_min, uint32_t w1_max, uint32_t w2_min, uint32_t w2_max);
+	void multi_run_seed(uint32_t replications, double max_time, uint32_t w1_min, uint32_t w1_max, uint32_t w2_min, uint32_t w2_max, Seed seed);
+
 	void before_replication(uint32_t replication) override;
 	void after_replication(uint32_t replication) override;
 	void before_simulation() override;
 	void after_simulation() override;
+
+	void on_stopped() override;
 
 	void on_replication_start();
 	void on_refresh();
@@ -42,10 +79,23 @@ public:
 	void set_sim_speed(double sim_speed);
 	void set_refresh_rate(double refresh_rate);
 
+	Seed get_seed() const;
+
+	size_t get_workers_1_working() const;
+	size_t get_workers_2_working() const;
+	size_t get_customer_queue_len() const;
+	size_t get_cars_waiting_for_repair_queue_len() const;
+	size_t get_repaired_cars_queue_len() const;
+	Interval get_wait_for_repair_duration_90_CI() const;
+
 signals:
-	void replication_finished(int replication, double wait_for_repair_time, double wait_in_queue_time);
-	void simulation_finished(double wait_for_repair_total_time, double wait_in_queue_total_time);
-	void refresh_triggered();
+	void replication_started(int replication);
+	void replication_finished(int replication, replication_info info);
+	void simulation_started(int workers1, int workers2);
+	void simulation_finished(int workers1, int workers2, double wait_for_repair_total_time, double wait_in_queue_total_time, double queue_len_total, double time_in_service_total);
+	void best_worker_count_found(int w1, int w2);
+	void run_finished();
+	void refresh_triggered(double time, refresh_info info);
 
 private:
 	void _init_time() override;
@@ -53,6 +103,7 @@ private:
 	void _clear_queue(std::queue<customer*> &queue);
 	void _clear_all_queues();
 	double _generate_repair_duration();
+	double _error(const std::pair<uint32_t, uint32_t> &setting, const std::pair<double, double> &result);
 
 private:
 	Seed _seed;
@@ -83,10 +134,18 @@ private:
 	std::uniform_real_distribution<> _dist_car_return_dur;
 	Generator _gen_car_return_dur;
 
-	statistic _stat_wait_for_repair;
-	statistic _stat_wait_in_queue;
+	statistic _stat_wait_for_repair; // take all
 	statistic _stat_wait_for_repair_total;
+	statistic _stat_wait_in_queue; // take all
 	statistic _stat_wait_in_queue_total;
+	weighted_statistic _stat_queue_len; // take only before max_time
+	statistic _stat_queue_len_total;
+	weighted_statistic _stat_cars_for_repair_queue_len; // only before max_time
+	statistic _stat_cars_for_repair_queue_len_total;
+	weighted_statistic _stat_repaired_cars_queue_len; // only before max_time
+	statistic _stat_repaired_cars_queue_len_total;
+	statistic _stat_time_in_service; // take all
+	statistic _stat_time_in_service_total;
 
 	std::vector<bool> _workers_group1;
 	std::vector<bool> _workers_group2;

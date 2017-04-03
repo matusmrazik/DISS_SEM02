@@ -23,6 +23,8 @@ multi_object_pool<
 > EVENTS_POOL;
 object_pool<customer> CUSTOMERS_POOL;
 
+std::pair<double, double> result;
+
 sim_core_car_service::sim_core_car_service()
 	: _seed(0), _dist_customer_arrive(1.0 / TIME_BETWEEN_CUSTOMERS),
 	  _gen_repair_count({{1, 1, 0.4}, {2, 2, 0.15}, {3, 3, 0.14}, {4, 4, 0.12}, {5, 5, 0.1}, {6, 6, 0.09}}),
@@ -71,12 +73,8 @@ void sim_core_car_service::init(uint32_t group1_workers, uint32_t group2_workers
 {
 	_seed = seed;
 	LOG_INFO("Seed = %u", _seed);
-	// params
-	_workers_group1.clear();
-	_workers_group1.resize(group1_workers, false);
-	_workers_group2.clear();
-	_workers_group2.resize(group2_workers, false);
-	// end params
+	_workers_group1.assign(group1_workers, false);
+	_workers_group2.assign(group2_workers, false);
 	_gen_seed.seed(_seed);
 	_gen_customer_arrive.seed(_gen_seed());
 	_gen_repair_count.seed(_gen_seed());
@@ -91,14 +89,63 @@ void sim_core_car_service::init(uint32_t group1_workers, uint32_t group2_workers
 	_gen_car_return_dur.seed(_gen_seed());
 }
 
-void sim_core_car_service::before_replication(uint32_t)
+void sim_core_car_service::single_run(uint32_t replications, double max_time, uint32_t w1, uint32_t w2)
 {
+	single_run_seed(replications, max_time, w1, w2, std::random_device{}());
+}
+
+void sim_core_car_service::single_run_seed(uint32_t replications, double max_time, uint32_t w1, uint32_t w2, Seed seed)
+{
+	init(w1, w2, seed);
+	simulate(replications, max_time);
+	if (_state != state::STOPPED)
+		emit run_finished();
+}
+
+void sim_core_car_service::multi_run(uint32_t replications, double max_time, uint32_t w1_min, uint32_t w1_max, uint32_t w2_min, uint32_t w2_max)
+{
+	multi_run_seed(replications, max_time, w1_min, w1_max, w2_min, w2_max, std::random_device{}());
+}
+
+void sim_core_car_service::multi_run_seed(uint32_t replications, double max_time, uint32_t w1_min, uint32_t w1_max, uint32_t w2_min, uint32_t w2_max, Seed seed)
+{
+	Generator g(seed);
+
+	std::pair<double, double> best_result(std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+	std::pair<uint32_t, uint32_t> best_setting(0, 0);
+
+	for (uint32_t w1 = w1_min; w1 <= w1_max; ++w1)
+	{
+		for (uint32_t w2 = w2_min; w2 <= w2_max; ++w2)
+		{
+			init(w1, w2, g());
+			simulate(replications, max_time);
+			if (_state == state::STOPPED) return;
+			if (_error({w1, w2}, result) < _error(best_setting, best_result))
+			{
+				best_result = result;
+				best_setting = {w1, w2};
+			}
+		}
+	}
+
+	if (_state != state::STOPPED)
+	{
+		emit best_worker_count_found(best_setting.first, best_setting.second);
+		emit run_finished();
+	}
+}
+
+void sim_core_car_service::before_replication(uint32_t replication)
+{
+	emit replication_started(replication);
+
 	_workers_group1.assign(_workers_group1.size(), false);
 	_workers_group2.assign(_workers_group2.size(), false);
 
 	auto time = _dist_customer_arrive(_gen_customer_arrive);
-	auto cust = CUSTOMERS_POOL.construct(_cur_time + time);
-	plan_event(EVENTS_POOL.construct<sim_event_customer_arrive>(cust->arrive_time, this, cust));
+	auto cust = CUSTOMERS_POOL.construct(std::max(_cur_time + time, 0.0));
+	plan_event(EVENTS_POOL.construct<sim_event_customer_arrive>(_cur_time + time, this, cust));
 	plan_event(EVENTS_POOL.construct<sim_event_replication_start>(0.0, this));
 	plan_event(EVENTS_POOL.construct<sim_event_workday_end>(days(1.0), this));
 
@@ -111,32 +158,73 @@ void sim_core_car_service::before_replication(uint32_t)
 
 void sim_core_car_service::after_replication(uint32_t replication)
 {
-	emit replication_finished(replication, _stat_wait_for_repair.mean(), _stat_wait_in_queue.mean());
 	_clear_all_queues();
 	_refresh_planned = false;
-//	printf("replication %u: finish time: %s\n", replication, to_pretty_str(_cur_time).c_str());
 	_stat_wait_for_repair_total.add(_stat_wait_for_repair.mean());
 	_stat_wait_in_queue_total.add(_stat_wait_in_queue.mean());
+	_stat_queue_len_total.add(_stat_queue_len.mean(_max_time));
+	_stat_cars_for_repair_queue_len_total.add(_stat_cars_for_repair_queue_len.mean(_max_time));
+	_stat_repaired_cars_queue_len_total.add(_stat_repaired_cars_queue_len.mean(_max_time));
+	_stat_time_in_service_total.add(_stat_time_in_service.mean());
+
+	replication_info info;
+	info.average_customer_queue_length = _stat_queue_len_total.mean();
+	info.average_cars_waiting_for_repair_queue_length = _stat_cars_for_repair_queue_len_total.mean();
+	info.average_repaired_cars_queue_length = _stat_repaired_cars_queue_len_total.mean();
+	info.average_wait_in_queue_duration = _stat_wait_in_queue_total.mean();
+	info.average_wait_for_repair_duration = _stat_wait_for_repair_total.mean();
+	info.average_time_in_service_duration = _stat_time_in_service_total.mean();
+	info.wait_for_repair_90_CI = confidence_interval_90_percent(_stat_wait_for_repair_total);
+	info.time_in_service_90_CI = confidence_interval_90_percent(_stat_time_in_service_total);
+	info.wait_in_queue_90_CI = confidence_interval_90_percent(_stat_wait_in_queue_total);
+	emit replication_finished(replication, info);
+
 	_stat_wait_for_repair.clear();
 	_stat_wait_in_queue.clear();
+	_stat_queue_len.clear();
+	_stat_cars_for_repair_queue_len.clear();
+	_stat_repaired_cars_queue_len.clear();
+	_stat_time_in_service.clear();
 }
 
 void sim_core_car_service::before_simulation()
 {
+	emit simulation_started(_workers_group1.size(), _workers_group2.size());
+
 	_watch_max_time = false;
 }
 
 void sim_core_car_service::after_simulation()
 {
-	emit simulation_finished(_stat_wait_for_repair_total.mean(), _stat_wait_in_queue_total.mean());
-//	printf("Priemerny cas cakania na opravu: %f h\n", to_hours(_stat_wait_for_repair_total.mean()));
-//	printf("Priemerny cas cakania v rade: %f min\n", to_minutes(_stat_wait_in_queue_total.mean()));
-//	printf("Priemerny cas cakania na opravu: %s\n", to_pretty_str(_stat_wait_for_repair_total.mean()).c_str());
-//	printf("Priemerny cas cakania v rade: %s\n", to_pretty_str(_stat_wait_in_queue_total.mean()).c_str());
-	printf("Priemerny cas cakania na opravu: %s\n", duration_as_string(_stat_wait_for_repair_total.mean()).toUtf8().data());
-	printf("Priemerny cas cakania v rade: %s\n", duration_as_string(_stat_wait_in_queue_total.mean()).toUtf8().data());
+	emit simulation_finished(_workers_group1.size(), _workers_group2.size(), _stat_wait_for_repair_total.mean(),
+							 _stat_wait_in_queue_total.mean(), _stat_queue_len_total.mean(), _stat_time_in_service_total.mean());
+	result = {_stat_wait_for_repair_total.mean(), _stat_wait_in_queue_total.mean()};
+
 	_stat_wait_for_repair_total.clear();
 	_stat_wait_in_queue_total.clear();
+	_stat_queue_len_total.clear();
+	_stat_cars_for_repair_queue_len_total.clear();
+	_stat_repaired_cars_queue_len_total.clear();
+	_stat_time_in_service_total.clear();
+}
+
+void sim_core_car_service::on_stopped()
+{
+	sim_core_base::on_stopped();
+	_clear_all_queues();
+	_refresh_planned = false;
+	_stat_wait_for_repair.clear();
+	_stat_wait_in_queue.clear();
+	_stat_queue_len.clear();
+	_stat_cars_for_repair_queue_len.clear();
+	_stat_repaired_cars_queue_len.clear();
+	_stat_time_in_service.clear();
+	_stat_wait_for_repair_total.clear();
+	_stat_wait_in_queue_total.clear();
+	_stat_queue_len_total.clear();
+	_stat_cars_for_repair_queue_len_total.clear();
+	_stat_repaired_cars_queue_len_total.clear();
+	_stat_time_in_service_total.clear();
 }
 
 void sim_core_car_service::on_replication_start()
@@ -152,13 +240,27 @@ void sim_core_car_service::on_replication_start()
 		_workers_group1[i] = true;
 		auto cust = _customer_queue.front();
 		_customer_queue.pop();
+		_stat_queue_len.add(_customer_queue.size(), _cur_time);
 		plan_event(EVENTS_POOL.construct<sim_event_order_entry>(_cur_time, this, cust, i));
 	}
 }
 
 void sim_core_car_service::on_refresh()
 {
-	emit refresh_triggered();
+	refresh_info info;
+	info.workers_1_working = std::count(_workers_group1.begin(), _workers_group1.end(), true);
+	info.workers_2_working = std::count(_workers_group2.begin(), _workers_group2.end(), true);
+	info.customer_queue_length = _customer_queue.size();
+	info.cars_waiting_for_repair_queue_length = _cars_for_repair_queue.size();
+	info.repaired_cars_queue_length = _repaired_cars_queue.size();
+	info.average_customer_queue_length = _stat_queue_len.mean(std::min(_cur_time, _max_time));
+	info.average_cars_waiting_for_repair_queue_length = _stat_cars_for_repair_queue_len.mean(std::min(_cur_time, _max_time));
+	info.average_repaired_cars_queue_length = _stat_repaired_cars_queue_len.mean(std::min(_cur_time, _max_time));
+	info.average_wait_in_queue_duration = _stat_wait_in_queue.mean();
+	info.average_wait_for_repair_duration = _stat_wait_for_repair.mean();
+	info.average_time_in_service_duration = _stat_time_in_service.mean();
+
+	emit refresh_triggered(_cur_time, info);
 	std::this_thread::sleep_for(std::chrono::milliseconds(_sim_speed));
 
 	if (!_watch_mode_enabled)
@@ -176,6 +278,7 @@ void sim_core_car_service::on_refresh()
 void sim_core_car_service::on_workday_end()
 {
 	_clear_queue(_customer_queue);
+	_stat_queue_len.add(_customer_queue.size(), _cur_time);
 	if (_cur_time + days(1.0) > _max_time)
 		return;
 	plan_event(EVENTS_POOL.construct<sim_event_workday_end>(_cur_time + days(1.0), this));
@@ -186,15 +289,16 @@ void sim_core_car_service::on_customer_arrive(customer *c)
 	auto time = _dist_customer_arrive(_gen_customer_arrive);
 	if (_cur_time + time <= _max_time)
 	{
-		auto cust = CUSTOMERS_POOL.construct(_cur_time + time);
-		plan_event(EVENTS_POOL.construct<sim_event_customer_arrive>(cust->arrive_time, this, cust));
+		auto cust = CUSTOMERS_POOL.construct(std::max(_cur_time + time, 0.0));
+		plan_event(EVENTS_POOL.construct<sim_event_customer_arrive>(_cur_time + time, this, cust));
 	}
 
-	c->set_queue_wait_start(_cur_time);
+	c->set_queue_wait_start(std::max(_cur_time, 0.0));
 
 	if (_cur_time < 0.0)
 	{
 		_customer_queue.push(c);
+		_stat_queue_len.add(_customer_queue.size(), 0.0);
 		return;
 	}
 
@@ -208,6 +312,8 @@ void sim_core_car_service::on_customer_arrive(customer *c)
 	}
 
 	_customer_queue.push(c);
+	if (_cur_time <= _max_time)
+		_stat_queue_len.add(_customer_queue.size(), _cur_time);
 }
 
 void sim_core_car_service::on_order_entry(customer *c, size_t worker_index)
@@ -243,7 +349,11 @@ void sim_core_car_service::on_park_to_workshop(customer *c, size_t worker_index)
 		break;
 	}
 	if (!found)
+	{
 		_cars_for_repair_queue.push(c);
+		if (_cur_time <= _max_time)
+			_stat_cars_for_repair_queue_len.add(_cars_for_repair_queue.size(), _cur_time);
+	}
 
 	// group 1 worker
 	if (_repaired_cars_queue.empty())
@@ -256,12 +366,16 @@ void sim_core_car_service::on_park_to_workshop(customer *c, size_t worker_index)
 
 		auto cust = _customer_queue.front();
 		_customer_queue.pop();
+		if (_cur_time <= _max_time)
+			_stat_queue_len.add(_customer_queue.size(), _cur_time);
 		plan_event(EVENTS_POOL.construct<sim_event_order_entry>(_cur_time, this, cust, worker_index));
 		return;
 	}
 
 	auto cust = _repaired_cars_queue.front();
 	_repaired_cars_queue.pop();
+	if (_cur_time <= _max_time)
+		_stat_repaired_cars_queue_len.add(_repaired_cars_queue.size(), _cur_time);
 	plan_event(EVENTS_POOL.construct<sim_event_car_return_start>(_cur_time + _gen_park_from_workshop_dur(), this, cust, worker_index));
 }
 
@@ -283,7 +397,11 @@ void sim_core_car_service::on_repair_finish(customer *c, size_t worker_index)
 		break;
 	}
 	if (!found)
+	{
 		_repaired_cars_queue.push(c);
+		if (_cur_time <= _max_time)
+			_stat_repaired_cars_queue_len.add(_repaired_cars_queue.size(), _cur_time);
+	}
 
 	if (_cars_for_repair_queue.empty())
 	{
@@ -293,6 +411,8 @@ void sim_core_car_service::on_repair_finish(customer *c, size_t worker_index)
 
 	auto cust = _cars_for_repair_queue.front();
 	_cars_for_repair_queue.pop();
+	if (_cur_time <= _max_time)
+		_stat_cars_for_repair_queue_len.add(_cars_for_repair_queue.size(), _cur_time);
 	plan_event(EVENTS_POOL.construct<sim_event_repair_start>(_cur_time, this, cust, worker_index));
 }
 
@@ -306,6 +426,7 @@ void sim_core_car_service::on_car_return_start(customer *c, size_t worker_index)
 
 void sim_core_car_service::on_car_return_finish(customer *c, size_t worker_index)
 {
+	_stat_time_in_service.add(_cur_time - c->arrive_time);
 	CUSTOMERS_POOL.destroy(c);
 
 	if (_repaired_cars_queue.empty())
@@ -318,12 +439,16 @@ void sim_core_car_service::on_car_return_finish(customer *c, size_t worker_index
 
 		auto cust = _customer_queue.front();
 		_customer_queue.pop();
+		if (_cur_time <= _max_time)
+			_stat_queue_len.add(_customer_queue.size(), _cur_time);
 		plan_event(EVENTS_POOL.construct<sim_event_order_entry>(_cur_time, this, cust, worker_index));
 		return;
 	}
 
 	auto cust = _repaired_cars_queue.front();
 	_repaired_cars_queue.pop();
+	if (_cur_time <= _max_time)
+		_stat_repaired_cars_queue_len.add(_repaired_cars_queue.size(), _cur_time);
 	plan_event(EVENTS_POOL.construct<sim_event_car_return_start>(_cur_time + _gen_park_from_workshop_dur(), this, cust, worker_index));
 }
 
@@ -352,6 +477,11 @@ void sim_core_car_service::set_sim_speed(double sim_speed)
 void sim_core_car_service::set_refresh_rate(double refresh_rate)
 {
 	_refresh_rate = refresh_rate;
+}
+
+Seed sim_core_car_service::get_seed() const
+{
+	return _seed;
 }
 
 void sim_core_car_service::_init_time()
@@ -404,4 +534,11 @@ double sim_core_car_service::_generate_repair_duration()
 		}
 	}
 	return ret;
+}
+
+double sim_core_car_service::_error(const std::pair<uint32_t, uint32_t> &setting, const std::pair<double, double> &result)
+{
+	if (result.first > hours(5.0)) return std::numeric_limits<double>::max();
+	if (result.second > minutes(3.0)) return std::numeric_limits<double>::max();
+	return setting.first + setting.second;
 }

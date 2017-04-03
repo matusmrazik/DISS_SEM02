@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1156</width>
-    <height>723</height>
+    <height>816</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,36 +15,10 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <property name="leftMargin">
-     <number>10</number>
-    </property>
-    <property name="topMargin">
-     <number>10</number>
-    </property>
-    <property name="rightMargin">
-     <number>10</number>
-    </property>
-    <property name="bottomMargin">
-     <number>10</number>
-    </property>
     <property name="spacing">
      <number>5</number>
     </property>
-    <item row="2" column="0" colspan="2">
-     <widget class="QTabWidget" name="tabWidget">
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-    <item row="0" column="0" rowspan="2" colspan="2">
+    <item row="0" column="0" colspan="2">
      <widget class="QGroupBox" name="groupBoxSimulation">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -561,10 +535,10 @@
            <number>1000000000</number>
           </property>
           <property name="singleStep">
-           <number>1000</number>
+           <number>100</number>
           </property>
           <property name="value">
-           <number>10000</number>
+           <number>100</number>
           </property>
          </widget>
          <widget class="QLabel" name="labelReplicationDuration">
@@ -968,45 +942,1089 @@
            <height>0</height>
           </size>
          </property>
-         <widget class="QLabel" name="labelTime">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>0</y>
-            <width>181</width>
-            <height>30</height>
-           </rect>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="leftMargin">
+           <number>5</number>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+          <property name="topMargin">
+           <number>5</number>
           </property>
-          <property name="text">
-           <string>Aktuálny simulačný čas:</string>
+          <property name="rightMargin">
+           <number>5</number>
           </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <item row="0" column="5">
+           <widget class="QLabel" name="labelWorkers1CurrentValue">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="labelReplicationValue">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelTime">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Simulačný čas:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelTimeValue">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="6">
+           <widget class="QLabel" name="labelWorkers2Current">
+            <property name="text">
+             <string>Počet pracovníkov 2:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="labelWorkers1Current">
+            <property name="text">
+             <string>Počet pracovníkov 1:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="labelReplication">
+            <property name="text">
+             <string>Replikácia:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QLabel" name="labelWorkers2CurrentValue">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBoxOutput">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>450</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Výstup</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBoxOutputReplication">
+         <property name="title">
+          <string>Aktuálna replikácia</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>5</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>6</number>
+          </property>
+          <item row="1" column="1">
+           <widget class="QLabel" name="labelWorkers2WorkingValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelCustomerQueueLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Dĺžka frontu čakajúcich:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="labelTimeInServiceDur">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas strávený v servise:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelAVGCustomerQueueLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerná dĺžka frontu čakajúcich:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="labelAVGCustomerQueueLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="1">
+           <widget class="QLabel" name="labelTimeInServiceDurValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="labelCustomerQueueLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelQueueForRepairLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Počet áut čakajúcich na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelWorkers1Working">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Aktívni pracovníci v skupine 1:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLabel" name="labelAVGRepairedQueueLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="labelWaitForRepairDur">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas čakania na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="labelRepairedQueueLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QLabel" name="labelWaitForRepairDurValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="labelAVGQueueForRepairLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný počet áut na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelWorkers2Working">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Aktívni pracovníci v skupine 2:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="labelQueueForRepairLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelRepairedQueueLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Počet opravených áut na odovzdanie:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="labelAVGQueueForRepairLenValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="labelAVGRepairedQueueLen">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný počet áut na odovzdanie:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelWorkers1WorkingValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelWaitInQueueDur">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas čakania vo fronte:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QLabel" name="labelWaitInQueueDurValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxOutputSimulation">
+         <property name="title">
+          <string>Simulácia</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>5</number>
+          </property>
+          <item row="1" column="1">
+           <widget class="QLabel" name="labelAVGQueueForRepairLenSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="labelWaitInQueueDurSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelTimeInSystemCI">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>90% IS času stráveného v servise:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="labelWaitForRepairCI">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>90% IS času čakania na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLabel" name="labelWaitForRepairCIValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelWaitInQueueDurSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas čakania vo fronte:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelAVGCustomerQueueLenSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerná dĺžka frontu čakajúcich:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelTimeInServiceDurSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas strávený v servise:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QLabel" name="labelTimeInSystemCIValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelAVGCustomerQueueLenSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAVGQueueForRepairLenSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný počet áut na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelWaitForRepairDurSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný čas čakania na opravu:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="labelWaitForRepairDurSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelAVGRepairedQueueLenSim">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Priemerný počet áut na odovzdanie:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="labelTimeInServiceDurSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="labelAVGRepairedQueueLenSimValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="labelWaitInQueueCI">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>90% IS času čakania vo fronte:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="labelWaitInQueueCIValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxIdealWorkersCount">
+         <property name="title">
+          <string>Najideálnejší počet pracovníkov</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>5</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelIdealWorkers1Count">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Počet pracovníkov skupiny 1:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelIdealWorkers1CountValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelIdealWorkers2Count">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Počet pracovníkov skupiny 2:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="labelIdealWorkers2CountValue">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QGroupBox" name="groupBoxVisualization">
+      <property name="title">
+       <string>Grafický výstup</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTabWidget" name="tabWidgetVisualization">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tabQueueLenWorkers1">
+          <attribute name="title">
+           <string>Počet čakajúcich podľa počtu pracovníkov 1</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="frameQueueLenWorkers1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="lineWidth">
+              <number>1</number>
+             </property>
+             <widget class="QLabel" name="labelQueueLenFixWorkers2">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>231</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Sledovať pre počet pracovníkov 2:</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="spinBoxQueueLenFixWorkers2">
+              <property name="geometry">
+               <rect>
+                <x>240</x>
+                <y>0</y>
+                <width>71</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCustomPlot" name="widgetPlotQueueLenWorkers1" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
-         <widget class="QLabel" name="labelTimeValue">
-          <property name="geometry">
-           <rect>
-            <x>200</x>
-            <y>0</y>
-            <width>181</width>
-            <height>30</height>
-           </rect>
+         <widget class="QWidget" name="tabQueueLenWorkers2">
+          <attribute name="title">
+           <string>Počet čakajúcich podľa počtu pracovníkov 2</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="frameQueueLenWorkers2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <widget class="QLabel" name="labelQueueLenFixWorkers1">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>231</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Sledovať pre počet pracovníkov 1:</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="spinBoxQueueLenFixWorkers1">
+              <property name="geometry">
+               <rect>
+                <x>240</x>
+                <y>0</y>
+                <width>71</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCustomPlot" name="widgetPlotQueueLenWorkers2" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tabTimeInServiceWorkers1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="text">
-           <string>-</string>
-          </property>
+          <attribute name="title">
+           <string>Priemerný čas strávený v servise podľa počtu pracovníkov 1</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="frameTimeInServiceWorkers1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <widget class="QLabel" name="labelTimeInServiceFixWorkers2">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>231</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Sledovať pre počet pracovníkov 2:</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="spinBoxTimeInServiceFixWorkers2">
+              <property name="geometry">
+               <rect>
+                <x>240</x>
+                <y>0</y>
+                <width>71</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCustomPlot" name="widgetPlotTimeInServiceWorkers1" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tabTimeInServiceWorkers2">
+          <attribute name="title">
+           <string>Priemerný čas strávený v servise podľa počtu pracovníkov 2</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="spacing">
+            <number>5</number>
+           </property>
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="frameTimeInServiceWorkers2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <widget class="QLabel" name="labelTimeInServiceFixWorkers1">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>231</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Sledovať pre počet pracovníkov 1:</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="spinBoxTimeInServiceFixWorkers1">
+              <property name="geometry">
+               <rect>
+                <x>240</x>
+                <y>0</y>
+                <width>71</width>
+                <height>25</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCustomPlot" name="widgetPlotTimeInServiceWorkers2" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -1015,9 +2033,16 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header location="global">qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

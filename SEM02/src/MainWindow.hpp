@@ -28,10 +28,23 @@ private slots:
 	void on_checkBoxWatchModeEnabled_toggled(bool checked);
 	void on_horizontalSliderSimSpeed_valueChanged(int value);
 	void on_horizontalSliderSimRefreshRate_valueChanged(int value);
+	void on_spinBoxWorkers1_valueChanged(int value);
+	void on_spinBoxWorkers2_valueChanged(int value);
+	void on_spinBoxWorkers1Min_valueChanged(int value);
+	void on_spinBoxWorkers1Max_valueChanged(int value);
+	void on_spinBoxWorkers2Min_valueChanged(int value);
+	void on_spinBoxWorkers2Max_valueChanged(int value);
 
-	void replication_finished(int replication, double wait_for_repair_time, double wait_in_queue_time);
-	void simulation_finished(double wait_for_repair_total_time, double wait_in_queue_total_time);
-	void refresh_triggered();
+	void replication_started(int replication);
+	void replication_finished(int replication, replication_info info);
+	void simulation_started(int workers1, int workers2);
+	void simulation_finished(int workers1, int workers2, double wait_for_repair_total_time, double wait_in_queue_total_time, double queue_len_total, double time_in_service_total);
+	void best_worker_count_found(int w1, int w2);
+	void run_finished();
+	void refresh_triggered(double time, refresh_info info);
+
+private:
+	void _prepare_plot();
 
 private:
 	Ui::MainWindow *_ui;

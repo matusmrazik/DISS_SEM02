@@ -40,9 +40,12 @@ SOURCES += \
 	log/log.cpp \
 	pool/object_pool.cpp \
 	stat/statistic.cpp \
+	stat/weighted_statistic.cpp \
+	stat/confidence_interval.cpp \
 	gen/empirical_int_distribution_generator.cpp \
 	gen/triangular_distribution_generator.cpp \
 	sim/customer.cpp \
+	sim/priority_queue.cpp \
 	sim/sim_core_base.cpp \
 	sim/sim_event_base.cpp \
 	sim/sim_core_car_service.cpp \
@@ -54,9 +57,12 @@ HEADERS += \
 	log/log.hpp \
 	pool/object_pool.hpp \
 	stat/statistic.hpp \
+	stat/weighted_statistic.hpp \
+	stat/confidence_interval.hpp \
 	gen/empirical_int_distribution_generator.hpp \
 	gen/triangular_distribution_generator.hpp \
 	sim/customer.hpp \
+	sim/priority_queue.hpp \
 	sim/sim_settings.hpp \
 	sim/sim_core_base.hpp \
 	sim/sim_event_base.hpp \

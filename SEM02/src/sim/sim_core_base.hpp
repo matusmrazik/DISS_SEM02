@@ -2,9 +2,9 @@
 #define SIM_CORE_BASE_HPP
 
 #include "sim_event_base.hpp"
+#include "priority_queue.hpp"
 
 #include <cinttypes>
-#include <queue>
 
 class sim_core_base
 {
@@ -48,7 +48,7 @@ protected:
 	bool _watch_max_time;
 
 private:
-	std::priority_queue<sim_event_base*, std::vector<sim_event_base*>, sim_event_comp> _event_queue;
+	priority_queue<sim_event_base*, std::vector<sim_event_base*>, sim_event_comp> _event_queue;
 };
 
 #endif // SIM_CORE_BASE_HPP
