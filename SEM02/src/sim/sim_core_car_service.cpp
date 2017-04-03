@@ -39,30 +39,6 @@ sim_core_car_service::sim_core_car_service()
 	  _dist_car_return_dur(123.0, 257.0),
 	  _watch_mode_enabled(false), _refresh_planned(false), _refresh_rate(1.0), _sim_speed(1000.0)
 {
-/*	double avg = 0.0;
-	int n = 1000000000;
-	init(0, 0);
-	for (int i = 1; i <= n; ++i)
-	{
-		if (i % 1000000 == 0)
-			printf("%d\n", i);
-		switch (_gen_repair_type())
-		{
-			case 0:
-				avg += _dist_simple_repair_dur(_gen_simple_repair_dur);
-				break;
-			case 1:
-				avg += _gen_moderate_repair_dur();
-				break;
-			case 2:
-				avg += _dist_complicated_repair_dur(_gen_complicated_repair_dur);
-				break;
-			default:
-				break;
-		}
-	}
-	avg /= static_cast<double>(n);
-	printf("%f\n", avg);*/
 }
 
 sim_core_car_service::~sim_core_car_service()
