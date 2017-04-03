@@ -49,8 +49,7 @@ SOURCES += \
 	sim/sim_core_base.cpp \
 	sim/sim_event_base.cpp \
 	sim/sim_core_car_service.cpp \
-	sim/sim_events_car_service.cpp \
-	sim/sim_wrapper.cpp
+	sim/sim_events_car_service.cpp
 
 HEADERS += \
 	MainWindow.hpp \
@@ -67,8 +66,7 @@ HEADERS += \
 	sim/sim_core_base.hpp \
 	sim/sim_event_base.hpp \
 	sim/sim_core_car_service.hpp \
-	sim/sim_events_car_service.hpp \
-	sim/sim_wrapper.hpp
+	sim/sim_events_car_service.hpp
 
 FORMS += \
 	MainWindow.ui
